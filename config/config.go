@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"bytes"
@@ -7,11 +7,8 @@ import (
 	"io/ioutil"
 )
 
-const (
-	configFile = "./config.json"
-)
-
-type config struct {
+// Config the configuration from configuration.json
+type Config struct {
 	AuthURL      string `json:"authUrl"`
 	TokenURL     string `json:"tokenUrl"`
 	ClientID     string `json:"clientId"`
@@ -20,7 +17,12 @@ type config struct {
 	AccessToken  string `json:"accessToken,omitempty"`
 }
 
-func (c *config) load(file string) error {
+// New Create a new instance of the configuration object
+func New() *Config {
+	return &Config{}
+}
+
+func (c *Config) Load(file string) error {
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		return err
@@ -30,7 +32,7 @@ func (c *config) load(file string) error {
 	return err
 }
 
-func (c *config) save(file string) error {
+func (c *Config) Save(file string) error {
 	fmt.Println("Saving config")
 	data, err := jsonMarshal(c)
 	if err != nil {

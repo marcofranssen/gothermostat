@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/marcofranssen/gothermostat/config"
 )
 
 func check(err error) {
@@ -10,16 +12,20 @@ func check(err error) {
 	}
 }
 
-func main() {
-	cfg := &config{}
+const (
+	configFile = "./config.json"
+)
 
-	err := cfg.load(configFile)
+func main() {
+	cfg := config.New()
+
+	err := cfg.Load(configFile)
 	check(err)
 
 	nest := &nest{config: cfg}
 	err = nest.authenticate()
 	check(err)
-	cfg.save(configFile)
+	cfg.Save(configFile)
 
 	var response Combined
 	err = nest.All(&response)

@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/marcofranssen/gothermostat/config"
 )
 
 type apiError struct {
@@ -103,7 +105,7 @@ type Combined struct {
 }
 
 type nest struct {
-	config *config
+	config *config.Config
 }
 
 func (n *nest) authenticate() error {
@@ -182,7 +184,7 @@ func checkRedirect(redirRequest *http.Request, via []*http.Request) error {
 	return nil
 }
 
-func getAccessToken(cfg *config) (tokenResponse, error) {
+func getAccessToken(cfg *config.Config) (tokenResponse, error) {
 	var tokenResp tokenResponse
 	authURL := fmt.Sprintf(cfg.TokenURL+"?client_id=%s&client_secret=%s&code=%s&grant_type=authorization_code", cfg.ClientID, cfg.ClientSecret, cfg.AuthCode)
 	resp, err := http.Post(authURL, "x-www-form-urlencoded", nil)
