@@ -1,4 +1,4 @@
-package main
+package nest
 
 import (
 	"encoding/json"
@@ -108,7 +108,17 @@ type nest struct {
 	config *config.Config
 }
 
-func (n *nest) authenticate() error {
+type Nest interface {
+	Authenticate() error
+	All(combined *Combined) error
+	Devices(devices *Devices) error
+}
+
+func New(config *config.Config) Nest {
+	return &nest{config: config}
+}
+
+func (n *nest) Authenticate() error {
 	if len(n.config.AuthCode) <= 0 {
 		fmt.Printf("Go to %s and get a authCode and put it in your config file.\n", n.config.AuthURL)
 	}
@@ -130,8 +140,8 @@ func (n *nest) Devices(devices *Devices) error {
 	return n.get("/devices", devices)
 }
 
-func (n *nest) All(devices *Combined) error {
-	return n.get("/", devices)
+func (n *nest) All(combined *Combined) error {
+	return n.get("/", combined)
 }
 
 func (n *nest) get(path string, response interface{}) error {

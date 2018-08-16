@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/marcofranssen/gothermostat/config"
+	"github.com/marcofranssen/gothermostat/nest"
 )
 
 func check(err error) {
@@ -22,13 +23,13 @@ func main() {
 	err := cfg.Load(configFile)
 	check(err)
 
-	nest := &nest{config: cfg}
-	err = nest.authenticate()
+	n := nest.New(cfg)
+	err = n.Authenticate()
 	check(err)
 	cfg.Save(configFile)
 
-	var response Combined
-	err = nest.All(&response)
+	var response nest.Combined
+	err = n.All(&response)
 	check(err)
 
 	fmt.Printf("UserID: %s\nAccessToken: %s\nClientVersion: %v\n", response.Metadata.UserID, response.Metadata.AccessToken, response.Metadata.ClientVersion)
