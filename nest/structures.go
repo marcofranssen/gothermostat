@@ -2,6 +2,17 @@ package nest
 
 import "time"
 
+type apiError struct {
+	Error       string `json:"error,omitempty"`
+	Description string `json:"error_description,omitempty"`
+	InstanceID  string `json:"instance_id,omitempty"`
+}
+
+type token struct {
+	AccessToken string `json:"access_token,omitempty"`
+	ExpiresIn   int    `json:"expires_in,omitempty"`
+}
+
 // Devices Nest device collection holding Thermostats
 type Devices struct {
 	Thermostats map[string]*Thermostat `json:"thermostats,omitempty"`

@@ -10,17 +10,6 @@ import (
 	"github.com/marcofranssen/gothermostat/config"
 )
 
-type apiError struct {
-	Error       string `json:"error,omitempty"`
-	Description string `json:"error_description,omitempty"`
-	InstanceID  string `json:"instance_id,omitempty"`
-}
-
-type tokenResponse struct {
-	AccessToken string `json:"access_token,omitempty"`
-	ExpiresIn   int    `json:"expires_in,omitempty"`
-}
-
 type nest struct {
 	config *config.Config
 }
@@ -116,8 +105,8 @@ func checkRedirect(redirRequest *http.Request, via []*http.Request) error {
 	return nil
 }
 
-func getAccessToken(cfg *config.Config) (tokenResponse, error) {
-	var tokenResp tokenResponse
+func getAccessToken(cfg *config.Config) (token, error) {
+	var tokenResp token
 	authURL := fmt.Sprintf(cfg.TokenURL+"?client_id=%s&client_secret=%s&code=%s&grant_type=authorization_code", cfg.ClientID, cfg.ClientSecret, cfg.AuthCode)
 	resp, err := http.Post(authURL, "x-www-form-urlencoded", nil)
 	if err != nil {
