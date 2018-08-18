@@ -2,10 +2,12 @@ package nest
 
 import "time"
 
+// Devices Nest device collection holding Thermostats
 type Devices struct {
 	Thermostats map[string]*Thermostat `json:"thermostats,omitempty"`
 }
 
+// Thermostat Nest thermostat holding thermostat data and settings
 type Thermostat struct {
 	Humidity                  int       `json:"humidity"`
 	Locale                    string    `json:"locale"`
@@ -58,11 +60,13 @@ type Thermostat struct {
 	HvacState                 string    `json:"hvac_state"`
 }
 
+// Where Structure location
 type Where struct {
 	WhereID string `json:"where_id"`
 	Name    string `json:"name"`
 }
 
+// Structure Nest structure
 type Structure struct {
 	Name        string            `json:"name"`
 	CountryCode string            `json:"country_code"`
@@ -73,12 +77,14 @@ type Structure struct {
 	Wheres      map[string]*Where `json:"wheres"`
 }
 
+// Metadata Nest API metadata holding client data
 type Metadata struct {
 	AccessToken   string `json:"access_token"`
 	ClientVersion int    `json:"client_version"`
 	UserID        string `json:"user_id"`
 }
 
+// Combined Combines all Devices, Structures and Metadata coming from Nest API
 type Combined struct {
 	Devices    Devices               `json:"devices"`
 	Structures map[string]*Structure `json:"structures"`

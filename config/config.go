@@ -22,8 +22,9 @@ func New() *Config {
 	return &Config{}
 }
 
-func (c *Config) Load(file string) error {
-	data, err := ioutil.ReadFile(file)
+// Load Load the config file in the given filePath
+func (c *Config) Load(filePath string) error {
+	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -32,13 +33,14 @@ func (c *Config) Load(file string) error {
 	return err
 }
 
-func (c *Config) Save(file string) error {
+// Save Save the config in the given filePath
+func (c *Config) Save(filePath string) error {
 	fmt.Println("Saving config")
 	data, err := jsonMarshal(c)
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(file, data, 0644)
+	err = ioutil.WriteFile(filePath, data, 0644)
 	return err
 }
 

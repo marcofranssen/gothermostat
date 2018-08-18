@@ -25,16 +25,19 @@ type nest struct {
 	config *config.Config
 }
 
+// Nest interact with the Nest API
 type Nest interface {
 	Authenticate() error
 	All(combined *Combined) error
 	Devices(devices *Devices) error
 }
 
+// New creates a new instance of Nest using the given config
 func New(config *config.Config) Nest {
 	return &nest{config: config}
 }
 
+// Authenticate Authenticate with the nest API
 func (n *nest) Authenticate() error {
 	if len(n.config.AuthCode) <= 0 {
 		fmt.Printf("Go to %s and get a authCode and put it in your config file.\n", n.config.AuthURL)
@@ -53,10 +56,12 @@ func (n *nest) Authenticate() error {
 	return nil
 }
 
+// Devices Get all devices from the Nest API
 func (n *nest) Devices(devices *Devices) error {
 	return n.get("/devices", devices)
 }
 
+// All Get all data from the nest API
 func (n *nest) All(combined *Combined) error {
 	return n.get("/", combined)
 }
