@@ -42,9 +42,7 @@ func main() {
 		check(err)
 
 		fmt.Printf("UserID: %s\nAccessToken: %s\nClientVersion: %v\n", response.Metadata.UserID, response.Metadata.AccessToken, response.Metadata.ClientVersion)
-		for _, thermostat := range response.Devices.Thermostats {
-			fmt.Printf("Thermostat: '%s', temperature %v", thermostat.Name, thermostat.AmbientTemperatureC)
-		}
+		printThermostatData(response.Devices.Thermostats)
 	}()
 
 	fmt.Println("Waiting for you to close")
@@ -56,4 +54,10 @@ func main() {
 
 	<-done
 	fmt.Println("Exiting")
+}
+
+func printThermostatData(thermostats map[string]*nest.Thermostat) {
+	for _, thermostat := range thermostats {
+		fmt.Printf("Thermostat: '%s', temperature %v", thermostat.Name, thermostat.AmbientTemperatureC)
+	}
 }
