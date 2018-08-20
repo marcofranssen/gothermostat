@@ -56,22 +56,7 @@ func (n *nest) All(combined *Combined) error {
 }
 
 func (n *nest) get(path string, response interface{}) error {
-	client := http.Client{
-		CheckRedirect: checkRedirect,
-	}
-
-	url := fmt.Sprintf("https://developer-api.nest.com%s", path)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return err
-	}
-
-	req.Header.Set("User-Agent", "")
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", n.config.AccessToken))
-
-	var resp *http.Response
-	resp, err = client.Do(req)
+	resp, err := n.authorizedRequest(http.MethodGet, path, "application/json")
 	if err != nil {
 		return err
 	}
@@ -88,6 +73,22 @@ func (n *nest) get(path string, response interface{}) error {
 
 	err = json.Unmarshal(body, response)
 	return err
+}
+
+func (n *nest) authorizedRequest(method string, path string, contentType string) (*http.Response, error) {
+	client := http.Client{
+		CheckRedirect: checkRedirect,
+	}
+	url := fmt.Sprintf("https://developer-api.nest.com%s", path)
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", contentType)
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", n.config.AccessToken))
+	resp, err := client.Do(req)
+	return resp, err
 }
 
 func checkRedirect(redirRequest *http.Request, via []*http.Request) error {
@@ -107,7 +108,7 @@ func checkRedirect(redirRequest *http.Request, via []*http.Request) error {
 
 func getAccessToken(cfg *config.Config) (token, error) {
 	var tokenResp token
-	authURL := fmt.Sprintf(cfg.TokenURL+"?client_id=%s&client_secret=%s&code=%s&grant_type=authorization_code", cfg.ClientID, cfg.ClientSecret, cfg.AuthCode)
+	authURL := fmt.Sprintf("%s?client_id=%s&client_secret=%s&code=%s&grant_type=authorization_code", cfg.TokenURL, cfg.ClientID, cfg.ClientSecret, cfg.AuthCode)
 	resp, err := http.Post(authURL, "x-www-form-urlencoded", nil)
 	if err != nil {
 		return tokenResp, err
