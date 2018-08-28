@@ -7,14 +7,20 @@ import (
 	"io/ioutil"
 )
 
+// WebserverConfig holds webserver settings
+type WebserverConfig struct {
+	Address string `json:"address"`
+}
+
 // Config the configuration from configuration.json
 type Config struct {
-	AuthURL      string `json:"authUrl"`
-	TokenURL     string `json:"tokenUrl"`
-	ClientID     string `json:"clientId"`
-	ClientSecret string `json:"clientSecret"`
-	AuthCode     string `json:"authCode"`
-	AccessToken  string `json:"accessToken,omitempty"`
+	Webserver    WebserverConfig `json:"webserver"`
+	AuthURL      string          `json:"authUrl"`
+	TokenURL     string          `json:"tokenUrl"`
+	ClientID     string          `json:"clientId"`
+	ClientSecret string          `json:"clientSecret"`
+	AuthCode     string          `json:"authCode"`
+	AccessToken  string          `json:"accessToken,omitempty"`
 }
 
 // New Create a new instance of the configuration object

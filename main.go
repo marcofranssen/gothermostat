@@ -50,6 +50,7 @@ func main() {
 		printThermostatData(now, response.Devices.Thermostats)
 		saveTemperatureResult(now, response.Devices.Thermostats)
 
+		go webserver(cfg.Webserver)
 		schedule(myContext, n, 5*time.Minute)
 	}()
 

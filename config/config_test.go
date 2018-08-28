@@ -16,6 +16,7 @@ func TestLoadConfig(t *testing.T) {
 		config.Load(configFilePath)
 
 		Convey("Config values should be there", func() {
+			So(config.Webserver, ShouldNotBeEmpty)
 			So(config.AuthURL, ShouldNotBeEmpty)
 			So(config.TokenURL, ShouldNotBeEmpty)
 			So(config.ClientID, ShouldBeEmpty)
