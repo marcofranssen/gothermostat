@@ -22,6 +22,7 @@ func api(w http.ResponseWriter, r *http.Request) {
 }
 
 func webserver(config config.WebserverConfig) error {
+	http.Handle("/", http.FileServer(http.Dir("./web/build")))
 	http.HandleFunc("/ping", ping)
 	http.HandleFunc("/api/thermostat-data", api)
 
