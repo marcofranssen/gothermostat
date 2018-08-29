@@ -12,8 +12,8 @@ import {
   CssBaseline,
   Typography
 } from '@material-ui/core';
-
 import { red, yellow } from '@material-ui/core/colors/red';
+import { withFetching } from './components';
 
 const styles = theme => ({
   root: {
@@ -36,7 +36,7 @@ const theme = createMuiTheme({
 
 class App extends Component {
   render() {
-    const { classes } = this.props;
+    const { classes, data, error, isLoading } = this.props;
 
     return (
       <MuiThemeProvider theme={theme}>
@@ -54,6 +54,15 @@ class App extends Component {
             <Typography variant="body1">
               Control your nest thermostat and view your temperature stats.
             </Typography>
+            <div>
+              {!data || error || isLoading ? (
+                'no data'
+              ) : (
+                <pre>
+                  <code>{JSON.stringify(data, null, 2)}</code>
+                </pre>
+              )}
+            </div>
           </Paper>
         </div>
       </MuiThemeProvider>
@@ -62,7 +71,13 @@ class App extends Component {
 }
 
 App.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  data: PropTypes.object,
+  error: PropTypes.object
 };
 
-export default withStyles(styles)(App);
+export default withFetching('/api/thermostat-data')(
+  withStyles(styles, { withTheme: true })(App)
+);

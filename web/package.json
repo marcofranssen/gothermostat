@@ -2,6 +2,7 @@
   "name": "gothermostat-react",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8888",
   "dependencies": {
     "@material-ui/core": "^3.0.0",
     "react": "^16.4.2",
