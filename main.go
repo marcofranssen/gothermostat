@@ -51,7 +51,7 @@ func main() {
 		saveTemperatureResult(now, response.Devices.Thermostats)
 
 		go webserver(cfg.Webserver)
-		schedule(myContext, n, 5*time.Minute)
+		schedule(myContext, n, 15*time.Minute)
 	}()
 
 	fmt.Println("Waiting for you to close")
