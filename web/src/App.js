@@ -13,7 +13,7 @@ import {
   Typography
 } from '@material-ui/core';
 import { red, yellow } from '@material-ui/core/colors/red';
-import { withFetching } from './components';
+import { withFetching, TemperaturesChart } from './components';
 
 const styles = theme => ({
   root: {
@@ -23,6 +23,11 @@ const styles = theme => ({
     margin: theme.spacing.unit * 2,
     padding: theme.spacing.unit * 2,
     color: theme.palette.text.secondary
+  },
+  chart: {
+    height: '800px',
+    backgroundColor: '#fff',
+    marginTop: theme.spacing.unit * 2
   }
 });
 
@@ -34,9 +39,44 @@ const theme = createMuiTheme({
   }
 });
 
+const groupBy = (xs, key) =>
+  xs.reduce((rv, x) => {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { chartData: null };
+  }
+
+  componentDidUpdate() {
+    const { data } = this.props;
+
+    if (!data || this.state.chartData) {
+      return;
+    }
+    const chartData = [].concat.apply(
+      [],
+      [groupBy(data, 'thermostat')].map(t =>
+        Object.entries(t).map(t => ({
+          id: t[0],
+          data: t[1]
+            .map(d => ({
+              x: new Date(d.timestamp).toLocaleString(),
+              y: d.temperatureC
+            }))
+            .slice(-60)
+        }))
+      )
+    );
+    this.setState(prevState => ({ ...prevState, chartData }));
+  }
+
   render() {
-    const { classes, data, error, isLoading } = this.props;
+    const { classes, error, isLoading } = this.props;
+    const { chartData } = this.state;
 
     return (
       <MuiThemeProvider theme={theme}>
@@ -54,15 +94,13 @@ class App extends Component {
             <Typography variant="body1">
               Control your nest thermostat and view your temperature stats.
             </Typography>
-            <div>
-              {!data || error || isLoading ? (
+            <Paper className={classes.chart}>
+              {!chartData || error || isLoading ? (
                 'no data'
               ) : (
-                <pre>
-                  <code>{JSON.stringify(data, null, 2)}</code>
-                </pre>
+                <TemperaturesChart data={chartData} />
               )}
-            </div>
+            </Paper>
           </Paper>
         </div>
       </MuiThemeProvider>
@@ -74,7 +112,7 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  data: PropTypes.object,
+  data: PropTypes.array,
   error: PropTypes.object
 };
 
