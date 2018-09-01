@@ -42,7 +42,7 @@ func (c *Config) Load(filePath string) error {
 // Save Save the config in the given filePath
 func (c *Config) Save(filePath string) error {
 	fmt.Println("Saving config")
-	data, err := jsonMarshal(c)
+	data, err := JsonMarshal(c)
 	if err != nil {
 		return err
 	}
@@ -50,8 +50,8 @@ func (c *Config) Save(filePath string) error {
 	return err
 }
 
-// jsonMarshal customized serializer to prevent escapeHtml in urls
-func jsonMarshal(t interface{}) ([]byte, error) {
+// JsonMarshal customized serializer to prevent escapeHtml in urls
+func JsonMarshal(t interface{}) ([]byte, error) {
 	buffer := &bytes.Buffer{}
 	encoder := json.NewEncoder(buffer)
 	encoder.SetEscapeHTML(false)

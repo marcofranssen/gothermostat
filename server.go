@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/marcofranssen/gothermostat/config"
@@ -13,8 +12,9 @@ func ping(w http.ResponseWriter, r *http.Request) {
 }
 
 func api(w http.ResponseWriter, r *http.Request) {
-	data, err := ioutil.ReadFile(dataFile)
+	data, err := store.GetTemperatureData()
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 	} else {
 		w.Write(data)

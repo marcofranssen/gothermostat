@@ -65,7 +65,7 @@ class App extends Component {
           data: t[1]
             .map(d => ({
               x: new Date(d.timestamp).toLocaleString(),
-              y: d.temperatureC
+              y: d.ambientTemperatureC
             }))
             .slice(-60)
         }))

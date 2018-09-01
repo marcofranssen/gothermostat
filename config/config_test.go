@@ -33,7 +33,7 @@ func TestSaveConfig(t *testing.T) {
 		So(config, ShouldNotBeNil)
 
 		Convey("Given the config is saved", func() {
-			loadedConfigJSON, _ := jsonMarshal(config)
+			loadedConfigJSON, _ := JsonMarshal(config)
 			config.Save(configFilePath)
 			savedConfigJSON, _ := ioutil.ReadFile(configFilePath)
 			So(string(loadedConfigJSON), ShouldEqual, string(savedConfigJSON))

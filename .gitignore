@@ -14,4 +14,4 @@
 .vscode/
 
 config.json
-thermodata.json
+data/
