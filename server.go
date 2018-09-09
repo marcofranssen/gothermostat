@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -11,13 +12,26 @@ func ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
 }
 
+func returnServerError(w http.ResponseWriter, err error) {
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Write([]byte(err.Error()))
+}
+
+func jsonWrite(w http.ResponseWriter, data interface{}) {
+	response, err := json.Marshal(data)
+	if err != nil {
+		returnServerError(w, err)
+	}
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(response)
+}
+
 func api(w http.ResponseWriter, r *http.Request) {
 	data, err := store.GetTemperatureData()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		returnServerError(w, err)
 	} else {
-		w.Write(data)
+		jsonWrite(w, data)
 	}
 }
 

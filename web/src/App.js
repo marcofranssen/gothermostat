@@ -39,12 +39,6 @@ const theme = createMuiTheme({
   }
 });
 
-const groupBy = (xs, key) =>
-  xs.reduce((rv, x) => {
-    (rv[x[key]] = rv[x[key]] || []).push(x);
-    return rv;
-  }, {});
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -57,20 +51,13 @@ class App extends Component {
     if (!data || this.state.chartData) {
       return;
     }
-    const chartData = [].concat.apply(
-      [],
-      [groupBy(data, 'thermostat')].map(t =>
-        Object.entries(t).map(t => ({
-          id: t[0],
-          data: t[1]
-            .map(d => ({
-              x: new Date(d.timestamp).toLocaleString(),
-              y: d.ambientTemperatureC
-            }))
-            .slice(-60)
-        }))
-      )
-    );
+    const chartData = data.thermostats.map(t => ({
+      id: t.name,
+      data: t.temperatures.map(temp => ({
+        x: new Date(temp.timestamp),
+        y: temp.ambientTemperatureC
+      }))
+    }));
     this.setState(prevState => ({ ...prevState, chartData }));
   }
 

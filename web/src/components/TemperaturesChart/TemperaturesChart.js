@@ -26,8 +26,13 @@ class TemperaturesChart extends Component {
           tickPadding: 5,
           tickRotation: -90,
           legend: 'time',
-          legendOffset: 36,
-          legendPosition: 'center'
+          legendOffset: 110,
+          legendPosition: 'center',
+          format: v => {
+            v = new Date(v);
+            console.log(v);
+            return `${v.getDate()}-${v.getMonth()}-${v.getFullYear()} ${v.getHours()}:${v.getMinutes()}`;
+          }
         }}
         axisLeft={{
           orient: 'left',

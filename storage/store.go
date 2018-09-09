@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
@@ -15,9 +16,14 @@ type Store struct {
 	thermoDataStorage string
 }
 
-type thermoData struct {
+type Thermostat struct {
+	ID           string        `json:"id"`
+	Name         string        `json:"name"`
+	Temperatures []temperature `json:"temperatures"`
+}
+
+type temperature struct {
 	Timestamp           time.Time `json:"timestamp"`
-	Thermostat          string    `json:"thermostat"`
 	AmbientTemperatureC float64   `json:"ambientTemperatureC"`
 	AmbientTemperatureF int       `json:"ambientTemperatureF"`
 	TargetTemperatureC  float64   `json:"targetTemperatureC"`
@@ -27,44 +33,71 @@ type thermoData struct {
 // NewStore create a new store for persisting data
 func NewStore(storageLocation string) *Store {
 	return &Store{
-		storageLocation + "/thermoData.json",
+		storageLocation,
 	}
+}
+
+// GetTemperatureData reads the temperatureData from storage
+func (s *Store) GetTemperatureData() (map[string][]Thermostat, error) {
+	fileInfo, err := ioutil.ReadDir(s.thermoDataStorage)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[string][]Thermostat)
+	result["thermostats"] = make([]Thermostat, 0, len(fileInfo))
+
+	for _, file := range fileInfo {
+		jsonBytes, err := s.readFile(s.thermoDataStorage + "/" + file.Name())
+		if err != nil {
+			return result, nil
+		}
+		data, err := s.unmarshal(jsonBytes)
+		result["thermostats"] = append(result["thermostats"], *data)
+	}
+
+	return result, nil
 }
 
 // SaveTemperatureResult persists temperature data
 func (s *Store) SaveTemperatureResult(tick time.Time, thermostats map[string]*nest.Thermostat) error {
-	data, err := s.readFile(s.thermoDataStorage)
-	if err != nil {
+	for k, v := range thermostats {
+		fileName := fmt.Sprintf("%s/%s.json", s.thermoDataStorage, k)
+		data, err := s.readFile(fileName)
+		if err != nil {
+			return err
+		}
+		thermoData, err := s.unmarshal(data)
+		if err != nil {
+			return err
+		}
+		newData := s.updateData(thermoData, v, tick)
+		bytes, err := config.JsonMarshal(&newData)
+
+		if err != nil {
+			return err
+		}
+		err = s.writeFile(fileName, bytes)
 		return err
-	}
-
-	var temperatureData []thermoData
-	json.Unmarshal(data, &temperatureData)
-	for _, thermostat := range thermostats {
-		temperatureData = append(temperatureData, thermoData{
-			tick,
-			thermostat.Name,
-			thermostat.AmbientTemperatureC,
-			thermostat.AmbientTemperatureF,
-			thermostat.TargetTemperatureC,
-			thermostat.TargetTemperatureF,
-		})
-		bytes, err := config.JsonMarshal(&temperatureData)
-
-		if err != nil {
-			return err
-		}
-		err = s.writeFile(s.thermoDataStorage, bytes)
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
 
-// GetTemperatureData reads the temperatureData from storage
-func (s *Store) GetTemperatureData() ([]byte, error) {
-	return s.readFile(s.thermoDataStorage)
+func (s *Store) updateData(storedData *Thermostat, thermostat *nest.Thermostat, tick time.Time) Thermostat {
+	storedData.Name = thermostat.Name
+	storedData.Temperatures = append(storedData.Temperatures, s.temp(thermostat, tick))
+
+	return *storedData
+}
+
+func (s *Store) temp(t *nest.Thermostat, tick time.Time) temperature {
+	return temperature{
+		tick,
+		t.AmbientTemperatureC,
+		t.AmbientTemperatureF,
+		t.TargetTemperatureC,
+		t.TargetTemperatureF,
+	}
 }
 
 func (s *Store) writeFile(filePath string, data []byte) error {
@@ -84,4 +117,13 @@ func (s *Store) readFile(filePath string) ([]byte, error) {
 		return nil, err
 	}
 	return data, nil
+}
+
+func (s *Store) unmarshal(data []byte) (*Thermostat, error) {
+	var thermoData Thermostat
+	err := json.Unmarshal(data, &thermoData)
+	if err != nil {
+		return nil, err
+	}
+	return &thermoData, nil
 }
