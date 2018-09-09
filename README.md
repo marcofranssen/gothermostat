@@ -27,3 +27,7 @@ Fill out your clientId, clientSecret, authCode.
 ```
 ./gothermostat
 ```
+
+## Demo
+
+![web](doc/web.jpg)
