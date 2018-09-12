@@ -3,6 +3,11 @@ import PropTypes from 'prop-types';
 
 import { ResponsiveLine } from '@nivo/line';
 
+const formatDate = date =>
+  `${('0' + date.getDate()).slice(-2)}-${('0' + (date.getMonth() + 1)).slice(
+    -2
+  )}-${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
+
 class TemperaturesChart extends Component {
   render() {
     const { data } = this.props;
@@ -28,11 +33,7 @@ class TemperaturesChart extends Component {
           legend: 'time',
           legendOffset: 110,
           legendPosition: 'center',
-          format: v => {
-            v = new Date(v);
-            console.log(v);
-            return `${v.getDate()}-${v.getMonth()}-${v.getFullYear()} ${v.getHours()}:${v.getMinutes()}`;
-          }
+          format: v => formatDate(new Date(v))
         }}
         axisLeft={{
           orient: 'left',
