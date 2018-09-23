@@ -22,6 +22,10 @@ cp dist.config.json config.json
 
 Fill out your clientId, clientSecret, authCode.
 
+### How to get your nest token
+
+https://codelabs.developers.google.com/codelabs/wwn-api-quickstart/#2
+
 ## Run
 
 ```
