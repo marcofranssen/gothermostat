@@ -1,5 +1,20 @@
 matrix:
   include:
+    - language: node_js
+      node_js:
+        - '10'
+      cache:
+        directories:
+          - web/node_modules
+      before_install:
+        - cd web/
+      install:
+        - npm install
+      script:
+        - npm run test:coverage
+        - npm run build
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
     - language: go
       go:
         - 1.11.x
