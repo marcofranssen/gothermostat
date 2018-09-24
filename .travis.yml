@@ -1,8 +1,12 @@
-matrix:
+stages:
+  - build
+  - release
+
+jobs:
   include:
-    - language: node_js
-      node_js:
-        - '10'
+    - stage: build
+      language: node_js
+      node_js: '10'
       cache:
         directories:
           - web/node_modules
@@ -15,9 +19,9 @@ matrix:
         - npm run build
       after_success:
         - bash <(curl -s https://codecov.io/bash)
-    - language: go
-      go:
-        - 1.11.x
+    - stage: build
+      language: go
+      go: 1.11.x
       before_install:
         - go get -t -v ./...
       script:
@@ -26,7 +30,10 @@ matrix:
         - go get github.com/smartystreets/goconvey/convey
       after_success:
         - bash <(curl -s https://codecov.io/bash)
-      deploy:
+    - stage: release
+      language: go
+      go: 1.11.x
+      deploy: &github
         - provider: script
           skip_cleanup: true
           script: curl -sL https://git.io/goreleaser | bash
