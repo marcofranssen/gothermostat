@@ -32,6 +32,9 @@ const styles = theme => ({
 });
 
 const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true
+  },
   palette: {
     type: 'dark',
     primary: red,
@@ -71,13 +74,13 @@ class App extends Component {
         <div className={classes.root}>
           <AppBar position="static" color="default">
             <Toolbar>
-              <Typography variant="title" color="inherit">
+              <Typography variant="h6" color="inherit">
                 Go thermostat
               </Typography>
             </Toolbar>
           </AppBar>
           <Paper className={classes.content} color="default">
-            <Typography variant="title">Go thermostat</Typography>
+            <Typography variant="h6">Go thermostat</Typography>
             <Typography variant="body1">
               Control your nest thermostat and view your temperature stats.
             </Typography>
