@@ -71,16 +71,26 @@ func (s *Store) SaveTemperatureResult(tick time.Time, thermostats map[string]*ne
 		if err != nil {
 			return err
 		}
-		newData := s.updateData(thermoData, v, tick)
-		bytes, err := config.JsonMarshal(&newData)
+		if s.checkTempChanged(thermoData, v) {
+			newData := s.updateData(thermoData, v, tick)
+			bytes, err := config.JsonMarshal(&newData)
 
-		if err != nil {
+			if err != nil {
+				return err
+			}
+			err = s.writeFile(fileName, bytes)
 			return err
 		}
-		err = s.writeFile(fileName, bytes)
-		return err
 	}
 	return nil
+}
+
+func (s *Store) checkTempChanged(storedData *Thermostat, thermostat *nest.Thermostat) bool {
+	lastMeasure := storedData.Temperatures[len(storedData.Temperatures)-1]
+	return lastMeasure.AmbientTemperatureC != thermostat.AmbientTemperatureC ||
+		lastMeasure.TargetTemperatureC != thermostat.TargetTemperatureC ||
+		lastMeasure.AmbientTemperatureF != thermostat.AmbientTemperatureF ||
+		lastMeasure.TargetTemperatureF != thermostat.TargetTemperatureF
 }
 
 func (s *Store) updateData(storedData *Thermostat, thermostat *nest.Thermostat, tick time.Time) Thermostat {
