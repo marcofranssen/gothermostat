@@ -73,7 +73,7 @@ func (s *Store) SaveTemperatureResult(tick time.Time, thermostats map[string]*ne
 		}
 		if s.checkTempChanged(thermoData, v) {
 			newData := s.updateData(thermoData, v, tick)
-			bytes, err := config.JsonMarshal(&newData)
+			bytes, err := config.JSONMarshal(&newData)
 
 			if err != nil {
 				return err
