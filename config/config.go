@@ -12,9 +12,15 @@ type WebserverConfig struct {
 	Address string `json:"address"`
 }
 
+// StorageConfig holds storage settings
+type StorageConfig struct {
+	MaxToKeep int `json:"maxToKeep"`
+}
+
 // Config the configuration from configuration.json
 type Config struct {
 	Webserver    WebserverConfig `json:"webserver"`
+	Storage      StorageConfig   `json:"storage"`
 	AuthURL      string          `json:"authUrl"`
 	TokenURL     string          `json:"tokenUrl"`
 	ClientID     string          `json:"clientId"`

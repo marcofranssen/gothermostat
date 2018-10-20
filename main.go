@@ -23,7 +23,7 @@ const (
 	configFile = "./config.json"
 )
 
-var store = storage.NewStore("./data")
+var store *storage.Store
 
 func main() {
 	myContext, cancel := context.WithCancel(context.Background())
@@ -38,6 +38,8 @@ func main() {
 
 		err := cfg.Load(configFile)
 		check(err)
+
+		store = storage.NewStore("./data", cfg.Storage.MaxToKeep)
 
 		n := nest.New(cfg)
 		err = n.Authenticate()

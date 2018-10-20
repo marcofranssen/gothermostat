@@ -14,8 +14,10 @@ import (
 // Store storage structure
 type Store struct {
 	thermoDataStorage string
+	maxToKeep         int
 }
 
+// Thermostat contains all stored temperatures for a thermostat
 type Thermostat struct {
 	ID           string        `json:"id"`
 	Name         string        `json:"name"`
@@ -31,9 +33,10 @@ type temperature struct {
 }
 
 // NewStore create a new store for persisting data
-func NewStore(storageLocation string) *Store {
+func NewStore(storageLocation string, maxToKeep int) *Store {
 	return &Store{
 		storageLocation,
+		maxToKeep,
 	}
 }
 
@@ -73,6 +76,7 @@ func (s *Store) SaveTemperatureResult(tick time.Time, thermostats map[string]*ne
 		}
 		if s.checkTempChanged(thermoData, v) {
 			newData := s.updateData(thermoData, v, tick)
+			newData = s.removeFromStart(&newData, s.maxToKeep)
 			bytes, err := config.JSONMarshal(&newData)
 
 			if err != nil {
@@ -96,6 +100,17 @@ func (s *Store) checkTempChanged(storedData *Thermostat, thermostat *nest.Thermo
 func (s *Store) updateData(storedData *Thermostat, thermostat *nest.Thermostat, tick time.Time) Thermostat {
 	storedData.Name = thermostat.Name
 	storedData.Temperatures = append(storedData.Temperatures, s.temp(thermostat, tick))
+
+	return *storedData
+}
+
+func (s *Store) removeFromStart(storedData *Thermostat, maxToKeep int) Thermostat {
+	totalTemps := len(storedData.Temperatures)
+	toRemove := totalTemps - maxToKeep
+
+	if toRemove > 0 {
+		storedData.Temperatures = storedData.Temperatures[toRemove:]
+	}
 
 	return *storedData
 }

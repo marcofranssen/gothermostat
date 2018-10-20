@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/marcofranssen/gothermostat/nest"
-
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -40,7 +39,7 @@ var storeJSON2 = []byte(`{
 
 func TestUnmarshalStoredJson(t *testing.T) {
 	Convey("Given one stored temperature", t, func() {
-		s := NewStore("./test-data")
+		s := NewStore("./test-data", 20)
 		storedData1, err := s.unmarshal(storeJSON1)
 		So(err, ShouldBeNil)
 		So(storedData1, ShouldNotBeNil)
@@ -84,7 +83,7 @@ func TestAddTemperateToThermostatData(t *testing.T) {
 		err := json.Unmarshal(thermoJSON, &thermoData)
 		So(err, ShouldBeNil)
 
-		s := NewStore("./test-data")
+		s := NewStore("./test-data", 20)
 		storedData, err := s.unmarshal(storeJSON1)
 		So(err, ShouldBeNil)
 		So(storedData, ShouldNotBeNil)
