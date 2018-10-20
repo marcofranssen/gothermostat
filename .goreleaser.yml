@@ -26,6 +26,9 @@ archive:
     - LICENSE.md
     - dist.config.json
     - web/build/**/*
+  format_overrides:
+    - goos: windows
+      format: zip
 checksum:
   name_template: 'checksums.txt'
 snapshot:
