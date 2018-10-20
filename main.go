@@ -23,9 +23,16 @@ const (
 	configFile = "./config.json"
 )
 
-var store *storage.Store
+var (
+	store   *storage.Store
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
 
 func main() {
+	fmt.Printf("%v, commit %v, built at %v\n\n", version, commit, date)
+
 	myContext, cancel := context.WithCancel(context.Background())
 
 	sigs := make(chan os.Signal, 1)
