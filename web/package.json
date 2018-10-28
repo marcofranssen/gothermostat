@@ -6,9 +6,9 @@
   "dependencies": {
     "@material-ui/core": "^3.2.0",
     "@nivo/line": "^0.50.0",
-    "react": "^16.5.2",
-    "react-dom": "^16.5.2",
-    "react-scripts": "^2.0.4"
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0",
+    "react-scripts": "^2.0.5"
   },
   "scripts": {
     "start": "react-scripts start",
