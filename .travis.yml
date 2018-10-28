@@ -33,6 +33,8 @@ jobs:
     - stage: release
       language: go
       go: 1.11.x
+      before_install:
+        - go get -t -v ./...
       deploy: &github
         - provider: script
           skip_cleanup: true
