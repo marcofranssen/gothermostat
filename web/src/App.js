@@ -57,7 +57,7 @@ class App extends Component {
     const chartData = data.thermostats.map(t => ({
       id: t.name,
       data: t.temperatures.map(temp => ({
-        x: new Date(temp.timestamp),
+        x: temp.timestamp.slice(0, 19), // strip milliseconds and timezone
         y: temp.ambientTemperatureC
       }))
     }));
