@@ -102,7 +102,7 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  data: PropTypes.array,
+  data: PropTypes.object,
   error: PropTypes.object
 };
 
