@@ -5,10 +5,10 @@
   "proxy": "http://localhost:8888",
   "dependencies": {
     "@material-ui/core": "^3.3.2",
-    "@nivo/line": "^0.50.0",
+    "@nivo/line": "^0.51.0",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
-    "react-scripts": "^2.0.5"
+    "react-scripts": "^2.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
