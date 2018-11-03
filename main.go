@@ -53,7 +53,8 @@ func main() {
 		check(err)
 		cfg.Save(configFile)
 
-		response := getData(n)
+		response, err := getData(n)
+		check(err)
 		now := time.Now()
 		fmt.Printf("UserID: %s\nAccessToken: %s\nClientVersion: %v\n", response.Metadata.UserID, response.Metadata.AccessToken, response.Metadata.ClientVersion)
 		printThermostatData(now, response.Devices.Thermostats)
@@ -79,7 +80,10 @@ func schedule(ctx context.Context, nest nest.Nest, refreshTime time.Duration) {
 	ticker := time.NewTicker(refreshTime)
 	go func() {
 		for tick := range ticker.C {
-			response := getData(nest)
+			response, err := getData(nest)
+			if err != nil {
+				return
+			}
 			printThermostatData(tick, response.Devices.Thermostats)
 			store.SaveTemperatureResult(tick, response.Devices.Thermostats)
 		}
@@ -91,11 +95,13 @@ func schedule(ctx context.Context, nest nest.Nest, refreshTime time.Duration) {
 	}
 }
 
-func getData(myNest nest.Nest) nest.Combined {
+func getData(myNest nest.Nest) (*nest.Combined, error) {
 	var response nest.Combined
 	err := myNest.All(&response)
-	check(err)
-	return response
+	if err != nil {
+		return nil, err
+	}
+	return &response, nil
 }
 
 func printThermostatData(tick time.Time, thermostats map[string]*nest.Thermostat) {
