@@ -57,7 +57,7 @@ class TemperaturesChart extends Component {
         legends={[
           {
             anchor: 'top-left',
-            direction: 'row',
+            direction: 'column',
             justify: false,
             translateX: 0,
             translateY: -40,
