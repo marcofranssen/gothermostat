@@ -54,13 +54,16 @@ class App extends Component {
     if (!data || this.state.chartData) {
       return;
     }
-    const chartData = data.thermostats.map(t => ({
-      id: t.name,
+    const mapNestData = type => t => ({
+      id: t.name + ' ' + type,
       data: t.temperatures.map(temp => ({
         x: temp.timestamp.slice(0, 19), // strip milliseconds and timezone
-        y: temp.ambientTemperatureC
+        y: temp[type + 'TemperatureC']
       }))
-    }));
+    });
+    const chartData = data.thermostats
+      .map(mapNestData('ambient'))
+      .concat(data.thermostats.map(mapNestData('target')));
     this.setState(prevState => ({ ...prevState, chartData }));
   }
 
