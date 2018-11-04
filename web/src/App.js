@@ -42,6 +42,25 @@ const theme = createMuiTheme({
   }
 });
 
+const safeLast = col => (col.length > 0 ? col[col.length - 1] : col[0]);
+
+const mapNestData = type => t => ({
+  id: t.name + ' ' + type,
+  data: t.temperatures
+    .map(temp => ({
+      x: temp.timestamp.slice(0, 19), // strip milliseconds and timezone
+      y: temp[type + 'TemperatureC']
+    }))
+    .reduce((acc, temp) => {
+      let last = safeLast(acc);
+      if (!last) {
+        return [...acc, temp];
+      } else {
+        return last.y !== temp.y ? [...acc, temp] : acc;
+      }
+    }, [])
+});
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -54,13 +73,6 @@ class App extends Component {
     if (!data || this.state.chartData) {
       return;
     }
-    const mapNestData = type => t => ({
-      id: t.name + ' ' + type,
-      data: t.temperatures.map(temp => ({
-        x: temp.timestamp.slice(0, 19), // strip milliseconds and timezone
-        y: temp[type + 'TemperatureC']
-      }))
-    });
     const chartData = data.thermostats
       .map(mapNestData('ambient'))
       .concat(data.thermostats.map(mapNestData('target')));
