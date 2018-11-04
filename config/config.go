@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"time"
 )
 
 // WebserverConfig holds webserver settings
@@ -17,10 +18,17 @@ type StorageConfig struct {
 	MaxToKeep int `json:"maxToKeep"`
 }
 
+// NestConfig holds nest settings
+type NestConfig struct {
+	// PollInterval the time interval in minutes to check for temperature changes
+	PollInterval time.Duration `json:"pollInterval"`
+}
+
 // Config the configuration from configuration.json
 type Config struct {
 	Webserver    WebserverConfig `json:"webserver"`
 	Storage      StorageConfig   `json:"storage"`
+	Nest         NestConfig      `json:"nest"`
 	AuthURL      string          `json:"authUrl"`
 	TokenURL     string          `json:"tokenUrl"`
 	ClientID     string          `json:"clientId"`

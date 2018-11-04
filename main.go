@@ -61,7 +61,7 @@ func main() {
 		store.SaveTemperatureResult(now, response.Devices.Thermostats)
 
 		go webserver(cfg.Webserver)
-		schedule(myContext, n, 15*time.Minute)
+		schedule(myContext, n, cfg.Nest.PollInterval*time.Minute)
 	}()
 
 	fmt.Println("Waiting for you to close")
