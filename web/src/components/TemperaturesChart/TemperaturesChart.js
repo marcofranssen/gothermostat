@@ -30,7 +30,7 @@ class TemperaturesChart extends Component {
           tickRotation: -90,
           legend: 'time',
           legendOffset: 110,
-          legendPosition: 'center',
+          legendPosition: 'middle',
           format: '%Y-%m-%d %H:%M'
         }}
         axisLeft={{
@@ -40,7 +40,7 @@ class TemperaturesChart extends Component {
           tickRotation: 0,
           legend: 'temperature',
           legendOffset: -40,
-          legendPosition: 'center'
+          legendPosition: 'middle'
         }}
         colors="set1"
         dotSize={10}
