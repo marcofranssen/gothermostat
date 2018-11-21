@@ -82,7 +82,8 @@ func schedule(ctx context.Context, nest nest.Nest, refreshTime time.Duration) {
 		for tick := range ticker.C {
 			response, err := getData(nest)
 			if err != nil {
-				return
+				fmt.Println(err)
+				continue
 			}
 			printThermostatData(tick, response.Devices.Thermostats)
 			store.SaveTemperatureResult(tick, response.Devices.Thermostats)
