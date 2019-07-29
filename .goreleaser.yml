@@ -94,3 +94,25 @@ nfpms:
         replacements:
           amd64: amd64
         name_template: "{{ .ProjectName }}-{{ .Version }}_{{ .Arch }}"
+
+dockers:
+  - goos: linux
+    goarch: amd64
+    goarm: ''
+    skip_push: true
+    dockerfile: Dockerfile
+    image_templates:
+      - "marcofranssen/gothermostat:latest"
+      - "marcofranssen/gothermostat:{{ .Tag }}"
+      - "marcofranssen/gothermostat:v{{ .Major }}"
+      - "marcofranssen/gothermostat:v{{ .Major }}.{{ .Minor }}"
+    build_flag_templates:
+      - "--label=nl.marcofranssen.version={{.Version}}"
+      - "--label=nl.marcofranssen.name={{.ProjectName}}"
+      - "--build-arg=GIT_TAG={{.Tag}}"
+      - "--build-arg=GIT_COMMIT={{.ShortCommit}}"
+      - "--build-arg=RDATE={{.Date}}"
+    binaries:
+      - gothermostat
+    extra_files:
+      - dist.config.json
