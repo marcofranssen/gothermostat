@@ -1,0 +1,16 @@
+[Unit]
+Description=Nest thermostat api integration
+
+After=systemd-user-sessions.service network.target
+
+[Service]
+User=gothermostat
+Group=gothermostat
+Type=simple
+WorkingDirectory=/etc/marcofranssen/gothermostat
+ExecStart=/usr/local/bin/gothermostat
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

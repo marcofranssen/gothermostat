@@ -44,3 +44,53 @@ release:
   github:
     owner: marcofranssen
     name: gothermostat
+
+nfpms:
+  - id: gothermostat
+
+    replacements:
+      amd64: 64-bit
+      386: 32-bit
+      darwin: macOS
+
+    vendor: Marco Franssen
+    homepage: https://marcofranssen.nl/
+
+    maintainer: Marco Franssen <marco.franssen@gmail.com>
+    description: API for VS code editor.
+    license: MIT
+
+    formats:
+      - deb
+
+    dependencies: []
+    recommends: []
+    suggests: []
+    conflicts: []
+
+    # Override default /usr/local/bin destination for binaries
+    # bindir: /opt/marcofranssen/gothermostat/bin
+
+    epoch: 1
+
+    empty_folders:
+      - /var/log/marcofranssen/gothermostat
+
+    files:
+      "web/build/**/*": "/etc/marcofranssen/gothermostat/web/build"
+      "scripts/etc/systemd/": "/etc/systemd/"
+
+    config_files:
+      "dist.config.json": "/etc/marcofranssen/gothermostat/config.json"
+
+    scripts:
+      preinstall: "scripts/preinstall.sh"
+      postinstall: "scripts/postinstall.sh"
+      preremove: "scripts/preremove.sh"
+      # postremove: "scripts/postremove.sh"
+
+    overrides:
+      deb:
+        replacements:
+          amd64: amd64
+        name_template: "{{ .ProjectName }}-{{ .Version }}_{{ .Arch }}"
