@@ -6,7 +6,7 @@ jobs:
   include:
     - stage: build
       language: node_js
-      node_js: '10'
+      node_js: '12'
       cache:
         directories:
           - web/node_modules
@@ -21,7 +21,7 @@ jobs:
         - bash <(curl -s https://codecov.io/bash)
     - stage: build
       language: go
-      go: 1.11.x
+      go: 1.12.x
       before_install:
         - go get -t -v ./...
       script:
@@ -32,7 +32,7 @@ jobs:
         - bash <(curl -s https://codecov.io/bash)
     - stage: release
       language: go
-      go: 1.11.x
+      go: 1.12.x
       before_install:
         - go get -t -v ./...
       deploy: &github
