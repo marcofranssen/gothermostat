@@ -20,14 +20,14 @@ const styles = theme => ({
     flexGrow: 1
   },
   content: {
-    margin: theme.spacing.unit * 2,
-    padding: theme.spacing.unit * 2,
+    margin: theme.spacing(2),
+    padding: theme.spacing(2),
     color: theme.palette.text.secondary
   },
   chart: {
     height: '800px',
     backgroundColor: '#fff',
-    marginTop: theme.spacing.unit * 2
+    marginTop: theme.spacing(2)
   }
 });
 
