@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
+	"log"
 	"time"
 
 	"github.com/marcofranssen/gothermostat/config"
 	"github.com/marcofranssen/gothermostat/nest"
 	"github.com/marcofranssen/gothermostat/storage"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 func check(err error) {
@@ -31,67 +32,63 @@ var (
 )
 
 func main() {
+	logger, err := zap.NewDevelopment(zap.AddStacktrace(zapcore.FatalLevel))
+	if err != nil {
+		log.Fatalf("Can't initialize zap logger: %v", err)
+	}
+	defer logger.Sync()
 	fmt.Printf("%v, commit %v, built at %v\n\n", version, commit, date)
 
+	cfg := config.New(logger)
+
+	err = cfg.Load(configFile)
+	check(err)
+
+	store = storage.NewStore("./data", cfg.Storage.MaxToKeep)
+
+	n := nest.New(cfg)
+	err = n.Authenticate()
+	check(err)
+	cfg.Save(configFile)
+
+	response, err := getData(n)
+	check(err)
+	now := time.Now()
+	logger.Info(
+		"Received response",
+		zap.String("userid", response.Metadata.UserID),
+		zap.String("accesstoken", response.Metadata.AccessToken),
+		zap.Int("clientversion", response.Metadata.ClientVersion),
+	)
+	printThermostatData(now, response.Devices.Thermostats, logger)
+	store.SaveTemperatureResult(now, response.Devices.Thermostats)
+
 	myContext, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	sigs := make(chan os.Signal, 1)
-	done := make(chan bool, 1)
+	go schedule(myContext, n, cfg.Nest.PollInterval*time.Minute, logger)
 
-	signal.Notify(sigs, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGKILL)
-
-	go func() {
-		cfg := config.New()
-
-		err := cfg.Load(configFile)
-		check(err)
-
-		store = storage.NewStore("./data", cfg.Storage.MaxToKeep)
-
-		n := nest.New(cfg)
-		err = n.Authenticate()
-		check(err)
-		cfg.Save(configFile)
-
-		response, err := getData(n)
-		check(err)
-		now := time.Now()
-		fmt.Printf("UserID: %s\nAccessToken: %s\nClientVersion: %v\n", response.Metadata.UserID, response.Metadata.AccessToken, response.Metadata.ClientVersion)
-		printThermostatData(now, response.Devices.Thermostats)
-		store.SaveTemperatureResult(now, response.Devices.Thermostats)
-
-		go webserver(cfg.Webserver)
-		schedule(myContext, n, cfg.Nest.PollInterval*time.Minute)
-	}()
-
-	fmt.Println("Waiting for you to close")
-	fmt.Println()
-
-	sig := <-sigs
-	fmt.Println()
-	fmt.Println(sig)
-	cancel()
-
-	<-done
-	fmt.Println("Exiting")
+	srv, err := NewServer(cfg.Webserver, logger)
+	check(err)
+	srv.Start()
 }
 
-func schedule(ctx context.Context, nest nest.Nest, refreshTime time.Duration) {
+func schedule(ctx context.Context, nest nest.Nest, refreshTime time.Duration, logger *zap.Logger) {
 	ticker := time.NewTicker(refreshTime)
 	go func() {
 		for tick := range ticker.C {
 			response, err := getData(nest)
 			if err != nil {
-				fmt.Println(err)
+				logger.Error("Failed to get data from nest api", zap.Error(err))
 				continue
 			}
-			printThermostatData(tick, response.Devices.Thermostats)
+			printThermostatData(tick, response.Devices.Thermostats, logger)
 			store.SaveTemperatureResult(tick, response.Devices.Thermostats)
 		}
 	}()
 	select {
 	case <-ctx.Done():
-		fmt.Println("Stopping ticker")
+		logger.Info("Stopping ticker")
 		ticker.Stop()
 	}
 }
@@ -105,8 +102,8 @@ func getData(myNest nest.Nest) (*nest.Combined, error) {
 	return &response, nil
 }
 
-func printThermostatData(tick time.Time, thermostats map[string]*nest.Thermostat) {
+func printThermostatData(tick time.Time, thermostats map[string]*nest.Thermostat, logger *zap.Logger) {
 	for _, thermostat := range thermostats {
-		fmt.Printf("%s | Thermostat: '%s', temperature %v\n", tick.Format(time.RFC3339), thermostat.Name, thermostat.AmbientTemperatureC)
+		logger.Info("Received thermostat data", zap.String("thermostat", thermostat.Name), zap.Float64("temperature", thermostat.AmbientTemperatureC))
 	}
 }

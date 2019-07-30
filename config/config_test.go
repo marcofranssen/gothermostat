@@ -4,6 +4,8 @@ import (
 	"io/ioutil"
 	"testing"
 
+	"go.uber.org/zap"
+
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -11,7 +13,7 @@ const configFilePath = "../dist.config.json"
 
 func TestLoadConfig(t *testing.T) {
 	Convey("Given loading a config file", t, func() {
-		config := New()
+		config := New(zap.NewNop())
 		So(config, ShouldNotBeNil)
 		config.Load(configFilePath)
 
@@ -28,7 +30,7 @@ func TestLoadConfig(t *testing.T) {
 }
 func TestSaveConfig(t *testing.T) {
 	Convey("Given saving a config file", t, func() {
-		config := New()
+		config := New(zap.NewNop())
 		config.Load(configFilePath)
 		So(config, ShouldNotBeNil)
 

@@ -3,9 +3,10 @@ package config
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 // WebserverConfig holds webserver settings
@@ -26,6 +27,7 @@ type NestConfig struct {
 
 // Config the configuration from configuration.json
 type Config struct {
+	log          *zap.Logger
 	Webserver    WebserverConfig `json:"webserver"`
 	Storage      StorageConfig   `json:"storage"`
 	Nest         NestConfig      `json:"nest"`
@@ -38,8 +40,8 @@ type Config struct {
 }
 
 // New Create a new instance of the configuration object
-func New() *Config {
-	return &Config{}
+func New(logger *zap.Logger) *Config {
+	return &Config{log: logger}
 }
 
 // Load Load the config file in the given filePath
@@ -55,7 +57,7 @@ func (c *Config) Load(filePath string) error {
 
 // Save Save the config in the given filePath
 func (c *Config) Save(filePath string) error {
-	fmt.Println("Saving config")
+	c.log.Info("Saving config", zap.String("filepath", filePath))
 	data, err := JSONMarshal(c)
 	if err != nil {
 		return err
