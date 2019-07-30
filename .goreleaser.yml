@@ -93,7 +93,7 @@ nfpms:
       deb:
         replacements:
           amd64: amd64
-        name_template: "{{ .ProjectName }}-{{ .Version }}_{{ .Arch }}"
+        name_template: "{{ .ProjectName }}-{{ .Version }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
 
 dockers:
   - goos: linux
