@@ -1,129 +1,20 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"os"
-	"time"
-
-	"github.com/marcofranssen/gothermostat/nest"
-	"github.com/marcofranssen/gothermostat/storage"
-	"github.com/spf13/viper"
-
-	homedir "github.com/mitchellh/go-homedir"
-
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
+	"github.com/marcofranssen/gothermostat/cmd"
 )
 
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 var (
-	store   *storage.Store
 	version = "dev"
 	commit  = "none"
 	date    = "unknown"
 )
 
-var cfgFile string
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	// Find home directory.
-	home, err := homedir.Dir()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	viper.AddConfigPath(home)
-	viper.AddConfigPath("./")
-	viper.SetConfigName(".gotherm")
-
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
-}
-
 func main() {
-	logger, err := zap.NewDevelopment(zap.AddStacktrace(zapcore.FatalLevel))
-	if err != nil {
-		log.Fatalf("Can't initialize zap logger: %v", err)
+	v := cmd.VersionInfo{
+		Version: version,
+		Commit:  commit,
+		Date:    cmd.ParseDate(date),
 	}
-	defer logger.Sync()
-	initConfig()
-	fmt.Printf("%v, commit %v, built at %v\n\n", version, commit, date)
-
-	cfgStorage := viper.Sub("storage")
-	store = storage.NewStore("./data", cfgStorage.GetInt("maxToKeep"))
-
-	n := nest.New(viper.Sub("nest.api"))
-	err = n.Authenticate()
-	check(err)
-	viper.WriteConfig()
-
-	response, err := getData(n)
-	check(err)
-	now := time.Now()
-	logger.Info(
-		"Received response",
-		zap.String("userid", response.Metadata.UserID),
-		zap.String("accesstoken", response.Metadata.AccessToken),
-		zap.Int("clientversion", response.Metadata.ClientVersion),
-	)
-	printThermostatData(now, response.Devices.Thermostats, logger)
-	store.SaveTemperatureResult(now, response.Devices.Thermostats)
-
-	myContext, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	nestCfg := viper.Sub("nest")
-	pollInterval := nestCfg.GetDuration("pollInterval")
-	go schedule(myContext, n, pollInterval*time.Minute, logger)
-
-	srv, err := NewServer(viper.Sub("server"), logger)
-	check(err)
-	srv.Start()
-}
-
-func schedule(ctx context.Context, nest nest.Nest, refreshTime time.Duration, logger *zap.Logger) {
-	ticker := time.NewTicker(refreshTime)
-	go func() {
-		for tick := range ticker.C {
-			response, err := getData(nest)
-			if err != nil {
-				logger.Error("Failed to get data from nest api", zap.Error(err))
-				continue
-			}
-			printThermostatData(tick, response.Devices.Thermostats, logger)
-			store.SaveTemperatureResult(tick, response.Devices.Thermostats)
-		}
-	}()
-	select {
-	case <-ctx.Done():
-		logger.Info("Stopping ticker")
-		ticker.Stop()
-	}
-}
-
-func getData(myNest nest.Nest) (*nest.Combined, error) {
-	var response nest.Combined
-	err := myNest.All(&response)
-	if err != nil {
-		return nil, err
-	}
-	return &response, nil
-}
-
-func printThermostatData(tick time.Time, thermostats map[string]*nest.Thermostat, logger *zap.Logger) {
-	for _, thermostat := range thermostats {
-		logger.Info("Received thermostat data", zap.String("thermostat", thermostat.Name), zap.Float64("temperature", thermostat.AmbientTemperatureC))
-	}
+	cmd.Execute(v)
 }

@@ -5,7 +5,7 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GOINSTALL=$(GOCMD) install
 GOBENCH=$(GOTEST) -run=^$$ -benchmem -bench .
-BINARY_NAME=gothermostat.exe
+BINARY_NAME=gotherm.exe
 
 all: test build
 build:
@@ -20,7 +20,7 @@ clean:
 	- rm -rf $(BINARY_NAME)
 	- rm -rf dist/
 run: build
-	./$(BINARY_NAME)
+	./$(BINARY_NAME) serve
 tools: download
 	cat tools.go | grep _ | awk -F'"' '{print $$2'} | xargs -tI % $(GOINSTALL) %
 download:

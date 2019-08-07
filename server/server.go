@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -11,7 +11,11 @@ import (
 	"github.com/spf13/viper"
 
 	"go.uber.org/zap"
+
+	"github.com/marcofranssen/gothermostat/storage"
 )
+
+var store *storage.Store
 
 // Server provides an http.Server
 type Server struct {
@@ -20,7 +24,8 @@ type Server struct {
 }
 
 // NewServer creates a new instance of a server and configures the routes
-func NewServer(cfg *viper.Viper, logger *zap.Logger) (*Server, error) {
+func NewServer(cfg *viper.Viper, storage *storage.Store, logger *zap.Logger) (*Server, error) {
+	store = storage
 	r := &http.ServeMux{}
 	r.Handle("/", http.FileServer(http.Dir("./web/build")))
 	r.HandleFunc("/ping", ping)

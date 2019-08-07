@@ -35,8 +35,8 @@ https://codelabs.developers.google.com/codelabs/wwn-api-quickstart/#2
 
 ## Run
 
-```
-./gothermostat
+```bash
+./gotherm serve
 ```
 
 ## Demo
