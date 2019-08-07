@@ -1,7 +1,13 @@
 # This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
+env:
+  - GO111MODULE=on
+before:
+  hooks:
+    - go mod download
 builds:
-- env:
+- binary: gotherm
+  env:
     - CGO_ENABLED=0
   goos:
     - linux
@@ -113,6 +119,6 @@ dockers:
       - "--build-arg=GIT_COMMIT={{.ShortCommit}}"
       - "--build-arg=RDATE={{.Date}}"
     binaries:
-      - gothermostat
+      - gotherm
     extra_files:
       - .gotherm.toml

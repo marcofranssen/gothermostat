@@ -8,7 +8,7 @@ User=gothermostat
 Group=gothermostat
 Type=simple
 WorkingDirectory=/etc/marcofranssen/gothermostat
-ExecStart=/usr/local/bin/gothermostat
+ExecStart=/usr/local/bin/gotherm serve
 Restart=always
 RestartSec=15
 
