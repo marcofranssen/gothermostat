@@ -16,8 +16,7 @@ clean:
 	- $(GOCLEAN)
 	- rm -rf $(BINARY_NAME)
 	- rm -rf dist/
-run:
-	$(GOBUILD) -o $(BINARY_NAME) -v ./...
+run: build
 	./$(BINARY_NAME)
 tools: download
 	cat tools.go | grep _ | awk -F'"' '{print $$2'} | xargs -tI % $(GOINSTALL) %
