@@ -3,6 +3,7 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
+GOINSTALL=$(GOCMD) install
 BINARY_NAME=gothermostat.exe
 
 all: test build
@@ -18,10 +19,12 @@ clean:
 run:
 	$(GOBUILD) -o $(BINARY_NAME) -v ./...
 	./$(BINARY_NAME)
-deps:
+tools: download
+	cat tools.go | grep _ | awk -F'"' '{print $$2'} | xargs -tI % $(GOINSTALL) %
+download:
+	$(GOCMD) mod download
+deps: download
 	cd web && npm i && cd ..
-	$(GOGET) github.com/smartystreets/goconvey/convey
-	$(GOGET) github.com/goreleaser/goreleaser
 release:
 	cd web && npm run build && cd ..
 	goreleaser --snapshot
