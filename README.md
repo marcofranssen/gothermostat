@@ -24,7 +24,7 @@ cat tools.go | grep _ | awk -F'"' '{print $2'} | xargs -tI % go install %
 ## Configure
 
 ```bash
-cp dist.config.json config.json
+cp .gotherm.toml.dist .gotherm.toml
 ```
 
 Fill out your clientId, clientSecret, authCode.

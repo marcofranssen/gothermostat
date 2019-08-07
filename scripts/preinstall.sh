@@ -9,4 +9,4 @@ else
 fi
 
 # make backup of config if exists
-cp /etc/marcofranssen/gothermostat/config.json /etc/marcofranssen/gothermostat/config.json.bak 2> /dev/null
+cp /etc/marcofranssen/gothermostat/.gotherm.toml /etc/marcofranssen/gothermostat/.gotherm.toml 2> /dev/null
