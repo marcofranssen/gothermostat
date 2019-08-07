@@ -7,8 +7,9 @@ require (
 	github.com/goreleaser/goreleaser v0.114.0
 	github.com/smartystreets/assertions v1.0.1 // indirect
 	github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337
+	github.com/spf13/cobra v0.0.5
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.10.0
-	gopkg.in/yaml.v2 v2.2.2 // indirect
+	golang.org/x/perf v0.0.0-20190620143337-7c3f2128ad9b
 )
