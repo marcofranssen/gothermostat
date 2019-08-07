@@ -14,6 +14,13 @@ This project enables to interact with your nest thermostat.
 go build .
 ```
 
+## Install tools
+
+```bash
+go mod download
+cat tools.go | grep _ | awk -F'"' '{print $2'} | xargs -tI % go install %
+```
+
 ## Configure
 
 ```bash
