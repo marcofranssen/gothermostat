@@ -4,6 +4,7 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GOINSTALL=$(GOCMD) install
+GOBENCH=$(GOTEST) -run=^$$ -benchmem -bench .
 BINARY_NAME=gothermostat.exe
 
 all: test build
@@ -11,6 +12,8 @@ build:
 	$(GOBUILD) -o $(BINARY_NAME) -v
 test:
 	$(GOTEST) -v ./...
+bench:
+	$(GOBENCH) ./...
 .PHONY: clean
 clean:
 	- $(GOCLEAN)
