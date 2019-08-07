@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/marcofranssen/gothermostat/config"
+	"github.com/spf13/viper"
 
 	"go.uber.org/zap"
 )
@@ -20,7 +20,7 @@ type Server struct {
 }
 
 // NewServer creates a new instance of a server and configures the routes
-func NewServer(cfg config.WebserverConfig, logger *zap.Logger) (*Server, error) {
+func NewServer(cfg *viper.Viper, logger *zap.Logger) (*Server, error) {
 	r := &http.ServeMux{}
 	r.Handle("/", http.FileServer(http.Dir("./web/build")))
 	r.HandleFunc("/ping", ping)
@@ -28,7 +28,7 @@ func NewServer(cfg config.WebserverConfig, logger *zap.Logger) (*Server, error) 
 
 	errorLog, _ := zap.NewStdLogAt(logger, zap.ErrorLevel)
 	srv := http.Server{
-		Addr:         cfg.Address,
+		Addr:         cfg.GetString("listenAddr"),
 		Handler:      r,
 		ErrorLog:     errorLog,
 		ReadTimeout:  5 * time.Second,

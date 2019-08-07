@@ -7,11 +7,11 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/marcofranssen/gothermostat/config"
+	"github.com/spf13/viper"
 )
 
 type nest struct {
-	config *config.Config
+	config *viper.Viper
 }
 
 // Nest interact with the Nest API
@@ -22,23 +22,23 @@ type Nest interface {
 }
 
 // New creates a new instance of Nest using the given config
-func New(config *config.Config) Nest {
+func New(config *viper.Viper) Nest {
 	return &nest{config: config}
 }
 
 // Authenticate Authenticate with the nest API
 func (n *nest) Authenticate() error {
-	if len(n.config.AuthCode) <= 0 {
-		fmt.Printf("Go to %s and get a authCode and put it in your config file.\n", n.config.AuthURL)
+	if len(n.config.GetString("authCode")) <= 0 {
+		fmt.Printf("Go to %s and get a authCode and put it in your config file.\n", n.config.GetString("authURL"))
 	}
 
-	if len(n.config.AccessToken) <= 0 {
+	if len(n.config.GetString("accessToken")) <= 0 {
 		tokenResp, err := getAccessToken(n.config)
 		if err != nil {
 			return err
 		}
 
-		n.config.AccessToken = tokenResp.AccessToken
+		n.config.Set("accessToken", tokenResp.AccessToken)
 
 		fmt.Println(tokenResp)
 	}
@@ -86,7 +86,7 @@ func (n *nest) authorizedRequest(method string, path string, contentType string)
 	}
 
 	req.Header.Set("Content-Type", contentType)
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", n.config.AccessToken))
+	req.Header.Set("Authorization", fmt.Sprint("Bearer", n.config.GetString("accessToken")))
 	resp, err := client.Do(req)
 	return resp, err
 }
@@ -106,9 +106,13 @@ func checkRedirect(redirRequest *http.Request, via []*http.Request) error {
 	return nil
 }
 
-func getAccessToken(cfg *config.Config) (token, error) {
+func getAccessToken(cfg *viper.Viper) (token, error) {
 	var tokenResp token
-	authURL := fmt.Sprintf("%s?client_id=%s&client_secret=%s&code=%s&grant_type=authorization_code", cfg.TokenURL, cfg.ClientID, cfg.ClientSecret, cfg.AuthCode)
+	tokenURL := cfg.GetString("tokenUrl")
+	clientID := cfg.GetString("clientId")
+	clientSecret := cfg.GetString("clientSecret")
+	authCode := cfg.GetString("authCode")
+	authURL := fmt.Sprintf("%s?client_id=%s&client_secret=%s&code=%s&grant_type=authorization_code", tokenURL, clientID, clientSecret, authCode)
 	resp, err := http.Post(authURL, "x-www-form-urlencoded", nil)
 	if err != nil {
 		return tokenResp, err

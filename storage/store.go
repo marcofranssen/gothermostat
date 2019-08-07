@@ -1,13 +1,13 @@
 package storage
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
 
-	"github.com/marcofranssen/gothermostat/config"
 	"github.com/marcofranssen/gothermostat/nest"
 )
 
@@ -77,12 +77,16 @@ func (s *Store) SaveTemperatureResult(tick time.Time, thermostats map[string]*ne
 		if s.checkTempChanged(thermoData, v) {
 			newData := s.updateData(thermoData, v, tick)
 			newData = s.removeFromStart(&newData, s.maxToKeep)
-			bytes, err := config.JSONMarshal(&newData)
+			buffer := &bytes.Buffer{}
+			encoder := json.NewEncoder(buffer)
+			encoder.SetEscapeHTML(false)
+			encoder.SetIndent("", "  ")
+			err := encoder.Encode(newData)
 
 			if err != nil {
 				return err
 			}
-			err = s.writeFile(fileName, bytes)
+			err = s.writeFile(fileName, buffer.Bytes())
 			return err
 		}
 	}

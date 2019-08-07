@@ -4,11 +4,14 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
-	"github.com/marcofranssen/gothermostat/config"
 	"github.com/marcofranssen/gothermostat/nest"
 	"github.com/marcofranssen/gothermostat/storage"
+	"github.com/spf13/viper"
+
+	homedir "github.com/mitchellh/go-homedir"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -20,10 +23,6 @@ func check(err error) {
 	}
 }
 
-const (
-	configFile = "./config.json"
-)
-
 var (
 	store   *storage.Store
 	version = "dev"
@@ -31,25 +30,45 @@ var (
 	date    = "unknown"
 )
 
+var cfgFile string
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
+	// Find home directory.
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	viper.AddConfigPath(home)
+	viper.AddConfigPath("./")
+	viper.SetConfigName(".gotherm")
+
+	viper.AutomaticEnv() // read in environment variables that match
+
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
+}
+
 func main() {
 	logger, err := zap.NewDevelopment(zap.AddStacktrace(zapcore.FatalLevel))
 	if err != nil {
 		log.Fatalf("Can't initialize zap logger: %v", err)
 	}
 	defer logger.Sync()
+	initConfig()
 	fmt.Printf("%v, commit %v, built at %v\n\n", version, commit, date)
 
-	cfg := config.New(logger)
+	cfgStorage := viper.Sub("storage")
+	store = storage.NewStore("./data", cfgStorage.GetInt("maxToKeep"))
 
-	err = cfg.Load(configFile)
-	check(err)
-
-	store = storage.NewStore("./data", cfg.Storage.MaxToKeep)
-
-	n := nest.New(cfg)
+	n := nest.New(viper.Sub("nest.api"))
 	err = n.Authenticate()
 	check(err)
-	cfg.Save(configFile)
+	viper.WriteConfig()
 
 	response, err := getData(n)
 	check(err)
@@ -65,10 +84,11 @@ func main() {
 
 	myContext, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	nestCfg := viper.Sub("nest")
+	pollInterval := nestCfg.GetDuration("pollInterval")
+	go schedule(myContext, n, pollInterval*time.Minute, logger)
 
-	go schedule(myContext, n, cfg.Nest.PollInterval*time.Minute, logger)
-
-	srv, err := NewServer(cfg.Webserver, logger)
+	srv, err := NewServer(viper.Sub("server"), logger)
 	check(err)
 	srv.Start()
 }

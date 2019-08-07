@@ -25,7 +25,7 @@ archives:
     files:
       - README.md
       - LICENSE.md
-      - dist.config.json
+      - .gotherm.toml
       - web/build/**/*
     format_overrides:
       - goos: windows
@@ -81,7 +81,7 @@ nfpms:
       "scripts/etc/systemd/": "/etc/systemd/"
 
     config_files:
-      "dist.config.json": "/etc/marcofranssen/gothermostat/config.json"
+      ".gotherm.toml": "/etc/marcofranssen/gothermostat/.gotherm.toml"
 
     scripts:
       preinstall: "scripts/preinstall.sh"
@@ -115,4 +115,4 @@ dockers:
     binaries:
       - gothermostat
     extra_files:
-      - dist.config.json
+      - .gotherm.toml
