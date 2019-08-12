@@ -8,26 +8,20 @@ import {
 import {
   AppBar,
   Toolbar,
-  Paper,
+  Box,
   CssBaseline,
   Typography
 } from '@material-ui/core';
-import { red, yellow } from '@material-ui/core/colors/red';
 import { withFetching, TemperaturesChart } from './components';
 
 const styles = theme => ({
   root: {
     flexGrow: 1
   },
-  content: {
-    margin: theme.spacing(2),
-    padding: theme.spacing(2),
-    color: theme.palette.text.secondary
-  },
   chart: {
-    height: '800px',
-    backgroundColor: '#fff',
-    marginTop: theme.spacing(2)
+    color: 'black',
+    background: 'white',
+    height: '650px'
   }
 });
 
@@ -36,9 +30,7 @@ const theme = createMuiTheme({
     useNextVariants: true
   },
   palette: {
-    type: 'dark',
-    primary: red,
-    secondary: yellow
+    type: 'dark'
   }
 });
 
@@ -94,19 +86,16 @@ class App extends Component {
               </Typography>
             </Toolbar>
           </AppBar>
-          <Paper className={classes.content} color="default">
-            <Typography variant="h6">Go thermostat</Typography>
-            <Typography variant="body1">
-              Control your nest thermostat and view your temperature stats.
-            </Typography>
-            <Paper className={classes.chart}>
-              {!chartData || error || isLoading ? (
-                'no data'
-              ) : (
-                <TemperaturesChart data={chartData} />
-              )}
-            </Paper>
-          </Paper>
+          <Box className={classes.chart}>
+            {!chartData || error || isLoading ? (
+              'no data'
+            ) : (
+              <TemperaturesChart
+                data={chartData}
+                className={{ color: 'black' }}
+              />
+            )}
+          </Box>
         </div>
       </MuiThemeProvider>
     );
