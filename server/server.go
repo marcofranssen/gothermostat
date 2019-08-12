@@ -6,11 +6,15 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"time"
 
 	"github.com/spf13/viper"
 
 	"go.uber.org/zap"
+
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 
 	"github.com/marcofranssen/gothermostat/storage"
 )
@@ -26,10 +30,16 @@ type Server struct {
 // NewServer creates a new instance of a server and configures the routes
 func NewServer(cfg *viper.Viper, storage *storage.Store, logger *zap.Logger) (*Server, error) {
 	store = storage
-	r := &http.ServeMux{}
-	r.Handle("/", http.FileServer(http.Dir("./web/build")))
-	r.HandleFunc("/ping", ping)
-	r.HandleFunc("/api/thermostat-data", api)
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+	r.Use(zapLogger(logger))
+	r.Use(middleware.Recoverer)
+
+	workDir, _ := os.Getwd()
+	webRoot := filepath.Join(workDir, "web", "build")
+	r.Handle("/*", http.FileServer(http.Dir(webRoot)))
+	r.Get("/ping", ping)
+	r.Get("/api/thermostat-data", api)
 
 	errorLog, _ := zap.NewStdLogAt(logger, zap.ErrorLevel)
 	srv := http.Server{
