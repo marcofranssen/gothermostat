@@ -10,28 +10,25 @@ class TemperaturesChart extends Component {
     return (
       <ResponsiveLine
         data={data}
-        margin={{
-          top: 70,
-          right: 50,
-          bottom: 150,
-          left: 70
-        }}
+        margin={{ top: 70, right: 50, bottom: 150, left: 70 }}
         xScale={{
           type: 'time',
           format: '%Y-%m-%dT%H:%M:%S',
           precision: 'minute'
         }}
-        stacked={true}
+        xFormat="time:%d %b %H:%M"
+        yScale={{ type: 'linear', stacked: false }}
         curve="monotoneX"
         axisBottom={{
           orient: 'bottom',
+          tickValues: 'every 12 hours',
           tickSize: 5,
           tickPadding: 5,
           tickRotation: -90,
           legend: 'time',
-          legendOffset: 110,
+          legendOffset: -12,
           legendPosition: 'middle',
-          format: '%Y-%m-%d %H:%M'
+          format: '%d %b %H:%M'
         }}
         axisLeft={{
           orient: 'left',
@@ -42,25 +39,27 @@ class TemperaturesChart extends Component {
           legendOffset: -40,
           legendPosition: 'middle'
         }}
-        colors="set1"
-        dotSize={10}
-        dotColor="inherit:darker(0.3)"
-        dotBorderWidth={2}
-        dotBorderColor="#ffffff"
-        enableDotLabel={true}
-        dotLabel="y"
-        dotLabelYOffset={-12}
+        colors={{ scheme: 'pastel1' }}
+        pointColor="white"
+        pointSize={6}
+        pointBorderWidth={2}
+        pointBorderColor={{ from: 'serieColor', modifiers: [['darker', 0.3]] }}
+        enablePointLabel={true}
+        pointLabel="y"
+        pointLabelYOffset={-12}
         enableArea={true}
+        debugSlices={true}
         animate={true}
         motionStiffness={90}
         motionDamping={15}
+        useMesh={true}
         legends={[
           {
             anchor: 'top-left',
             direction: 'column',
             justify: false,
             translateX: 0,
-            translateY: -40,
+            translateY: -60,
             itemsSpacing: 0,
             itemDirection: 'left-to-right',
             itemWidth: 80,
