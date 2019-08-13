@@ -81,10 +81,11 @@ nfpms:
 
     empty_folders:
       - /var/log/marcofranssen/gothermostat
+      - /etc/marcofranssen/gothermostat/data
 
     files:
+      "scripts/etc/systemd/system/gothermostat.service": "/etc/systemd/system/gothermostat.service"
       "web/build/**/*": "/etc/marcofranssen/gothermostat/web/build"
-      "scripts/etc/systemd/": "/etc/systemd/"
 
     config_files:
       ".gotherm.toml": "/etc/marcofranssen/gothermostat/.gotherm.toml"
