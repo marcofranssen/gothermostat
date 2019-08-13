@@ -9,4 +9,5 @@ else
 fi
 
 # make backup of config if exists
+echo "- Create config backup"
 cp /etc/marcofranssen/gothermostat/.gotherm.toml /etc/marcofranssen/gothermostat/.gotherm.toml.bak || true 2>/dev/null
