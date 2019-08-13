@@ -8,3 +8,7 @@ chmod +x /usr/local/bin/gotherm
 # restore config backup if exists
 echo "- Restoring config"
 cp /etc/marcofranssen/gothermostat/.gotherm.toml.bak /etc/marcofranssen/gothermostat/.gotherm.toml || true 2>/dev/null
+
+echo "- Enable/start systemctl service"
+systemctl enable gothermostat --quiet --force
+systemctl start gothermostat --quiet --force
