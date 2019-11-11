@@ -5,6 +5,7 @@
 [![GoDoc](https://godoc.org/github.com/marcofranssen/gothermostat?status.svg)](https://godoc.org/github.com/marcofranssen/gothermostat)
 [![Coverage Status](http://codecov.io/github/marcofranssen/gothermostat/coverage.svg?branch=master)](http://codecov.io/github/marcofranssen/gothermostat?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/marcofranssen/gothermostat)](https://goreportcard.com/report/github.com/marcofranssen/gothermostat)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmarcofranssen%2Fgothermostat.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmarcofranssen%2Fgothermostat?ref=badge_shield)
 
 This project enables to interact with your nest thermostat.
 
@@ -42,3 +43,7 @@ https://codelabs.developers.google.com/codelabs/wwn-api-quickstart/#2
 ## Demo
 
 ![web](doc/web.jpg)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmarcofranssen%2Fgothermostat.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmarcofranssen%2Fgothermostat?ref=badge_large)
