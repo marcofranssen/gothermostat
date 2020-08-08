@@ -5,7 +5,7 @@
   "proxy": "http://localhost:8888",
   "dependencies": {
     "@material-ui/core": "^4.3.2",
-    "@nivo/line": "^0.59.3",
+    "@nivo/line": "^0.62.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-scripts": "^3.1.0"
