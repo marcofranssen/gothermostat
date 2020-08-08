@@ -1,0 +1,138 @@
+name: Continuous Integration
+
+on: [push]
+
+jobs:
+  golang:
+    name: Go CI
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go-version: [1.14]
+
+      fail-fast: true
+
+    steps:
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v2.1.1
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        id: go-mod-cache
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Get dependencies
+        run: go mod download
+
+      - name: Lint
+        run: |
+          go install golang.org/x/tools/cmd/goimports
+          result=$($(go env GOPATH)/bin/goimports -d -e -local github.com/philips-labs $(go list -f {{.Dir}} ./...))
+          echo $result
+          [ -n "$result" ] && exit 1 || exit 0
+
+      - name: Build
+        run: make build
+
+      - name: Test and Cover
+        run: go test -v -race -count=1 -covermode=atomic -coverprofile=coverage.out ./...
+
+      - name: Upload Code Coverage
+        uses: codecov/codecov-action@v1.0.12
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.out
+          flags: unittests
+          name: codecov-umbrella
+          yml: ./codecov.yml
+          fail_ci_if_error: true
+
+  nodejs:
+    name: NodeJS CI
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+      fail-fast: true
+
+    env:
+      CI: true
+
+    steps:
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2.1.1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        working-directory: web
+        run: yarn
+
+      - name: Build local packages
+        working-directory: web
+        run: yarn build
+
+      - name: Test and coverage
+        working-directory: web
+        run: yarn test --coverage
+
+      - name: Upload Code Coverage
+        uses: codecov/codecov-action@v1.0.12
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./web/coverage/clover.xml
+          flags: unittests
+          name: codecov-umbrella
+          yml: ./codecov.yml
+          fail_ci_if_error: true
+
+  release:
+    name: Release artifacts
+    needs: [golang, nodejs]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Registries
+        run: |
+          echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: release
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Logout from Docker Registries
+        run: |
+          docker logout
