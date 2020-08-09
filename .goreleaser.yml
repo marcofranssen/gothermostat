@@ -15,18 +15,17 @@ builds:
     - windows
   goarch:
     - amd64
-    - arm
     - arm64
   goarm:
     - 6
     - 7
+    - 8
 archives:
   - id: gothermostat
     replacements:
       darwin: Darwin
       linux: Linux
       windows: Windows
-      386: i386
       amd64: x86_64
     files:
       - README.md
@@ -56,14 +55,13 @@ nfpms:
 
     replacements:
       amd64: 64-bit
-      386: 32-bit
       darwin: macOS
 
     vendor: Marco Franssen
     homepage: https://marcofranssen.nl/
 
     maintainer: Marco Franssen <marco.franssen@gmail.com>
-    description: Nest integration with VS-code.
+    description: Nest integration to fetch temperature changes.
     license: MIT
 
     formats:
