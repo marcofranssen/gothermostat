@@ -9,9 +9,9 @@ require (
 	github.com/goreleaser/goreleaser v0.114.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/smartystreets/assertions v1.0.1 // indirect
-	github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337
+	github.com/smartystreets/goconvey v1.6.4
 	github.com/spf13/cobra v0.0.7
-	github.com/spf13/viper v1.4.0
+	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
 	github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8 // indirect
 	go.uber.org/zap v1.15.0
