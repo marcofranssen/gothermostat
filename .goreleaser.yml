@@ -53,6 +53,8 @@ release:
 nfpms:
   - id: gothermostat
 
+    file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+
     replacements:
       amd64: 64-bit
       darwin: macOS
@@ -98,7 +100,6 @@ nfpms:
       deb:
         replacements:
           amd64: amd64
-        name_template: "{{ .ProjectName }}-{{ .Version }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
 
 dockers:
   - goos: linux
