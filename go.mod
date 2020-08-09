@@ -3,7 +3,7 @@ module github.com/marcofranssen/gothermostat
 go 1.12
 
 require (
-	github.com/go-chi/chi v4.0.2+incompatible
+	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/gopherjs/gopherjs v0.0.0-20190430165422-3e4dfb77656c // indirect
 	github.com/goreleaser/goreleaser v0.114.0
 	github.com/mitchellh/go-homedir v1.1.0
