@@ -126,7 +126,7 @@ jobs:
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build web
-        run: cd web ; yarn build ; cd -
+        run: cd web ; yarn ; yarn build ; cd -
 
       - name: release
         uses: goreleaser/goreleaser-action@v2
@@ -135,6 +135,11 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release Docker
+        run: |
+          make dockerize-web
+          make docker-publish-web
 
       - name: Logout from Docker Registries
         run: |

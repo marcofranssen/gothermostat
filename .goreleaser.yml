@@ -120,4 +120,4 @@ dockers:
     binaries:
       - gotherm
     extra_files:
-      - .gotherm.toml
+      - .gotherm.toml.dist
