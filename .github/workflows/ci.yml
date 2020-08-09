@@ -125,6 +125,9 @@ jobs:
         run: |
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
+      - name: Build web
+        run: cd web ; yarn build ; cd -
+
       - name: release
         uses: goreleaser/goreleaser-action@v2
         with:

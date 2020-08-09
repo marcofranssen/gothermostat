@@ -30,7 +30,6 @@ archives:
     files:
       - README.md
       - LICENSE.md
-      - .gotherm.toml
       - web/build/**/*
     format_overrides:
       - goos: windows
@@ -52,6 +51,8 @@ release:
 
 nfpms:
   - id: gothermostat
+
+    file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
 
     replacements:
       amd64: 64-bit
@@ -86,7 +87,7 @@ nfpms:
       "web/build/**/*": "/etc/marcofranssen/gothermostat/web/build"
 
     config_files:
-      ".gotherm.toml": "/etc/marcofranssen/gothermostat/.gotherm.toml"
+      ".gotherm.toml.dist": "/etc/marcofranssen/gothermostat/.gotherm.toml"
 
     scripts:
       preinstall: "scripts/preinstall.sh"
@@ -98,7 +99,6 @@ nfpms:
       deb:
         replacements:
           amd64: amd64
-        name_template: "{{ .ProjectName }}-{{ .Version }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
 
 dockers:
   - goos: linux

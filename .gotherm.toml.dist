@@ -5,7 +5,7 @@
 [nest.api]
   accesstoken = ""
   authcode = ""
-  authurl = "https://home.nest.com/login/oauth2?client_id=45cc0763-6b99-4143-83fe-c4432004dd7c&state=STATE"
+  authurl = "https://home.nest.com/login/oauth2?client_id={{client_id}}&state=STATE"
   clientid = ""
   clientsecret = ""
   tokenurl = "https://api.home.nest.com/oauth2/access_token"

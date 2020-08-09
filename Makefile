@@ -29,4 +29,4 @@ deps: download
 	cd web && npm i && cd ..
 release:
 	cd web && npm run build && cd ..
-	goreleaser --snapshot
+	goreleaser --snapshot --rm-dist
