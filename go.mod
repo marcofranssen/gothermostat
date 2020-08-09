@@ -3,7 +3,6 @@ module github.com/marcofranssen/gothermostat
 go 1.12
 
 require (
-	github.com/coreos/go-etcd v2.0.0+incompatible // indirect
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/gopherjs/gopherjs v0.0.0-20190430165422-3e4dfb77656c // indirect
 	github.com/goreleaser/goreleaser v0.114.0
@@ -13,7 +12,6 @@ require (
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
-	github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8 // indirect
 	go.uber.org/zap v1.15.0
 	golang.org/x/perf v0.0.0-20190620143337-7c3f2128ad9b
 )
