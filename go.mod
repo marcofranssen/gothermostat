@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go/kms v1.0.0 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/gopherjs/gopherjs v0.0.0-20190430165422-3e4dfb77656c // indirect
-	github.com/goreleaser/goreleaser v0.176.0
+	github.com/goreleaser/goreleaser v0.180.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/smartystreets/assertions v1.0.1 // indirect
 	github.com/smartystreets/goconvey v1.6.4
