@@ -3,10 +3,10 @@ module github.com/marcofranssen/gothermostat
 go 1.12
 
 require (
-	cloud.google.com/go/kms v1.0.0 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/gopherjs/gopherjs v0.0.0-20190430165422-3e4dfb77656c // indirect
-	github.com/goreleaser/goreleaser v0.176.0
+	github.com/goreleaser/goreleaser v1.3.1
+	github.com/matryer/is v1.4.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/smartystreets/goconvey v1.7.2
 	github.com/spf13/cobra v1.3.0
