@@ -15,9 +15,10 @@ jobs:
 
     steps:
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          check-latest: true
 
       - name: Check out code
         uses: actions/checkout@v3
