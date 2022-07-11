@@ -19,8 +19,7 @@ require (
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/golang-jwt/jwt/v4 v4.2.0 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20190430165422-3e4dfb77656c // indirect
-	github.com/goreleaser/goreleaser v1.9.2
-	github.com/hashicorp/go-retryablehttp v0.7.0 // indirect
+	github.com/goreleaser/goreleaser v1.10.2
 	github.com/hashicorp/go-version v1.3.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/smartystreets/goconvey v1.7.2
@@ -29,5 +28,4 @@ require (
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.21.0
 	golang.org/x/perf v0.0.0-20190620143337-7c3f2128ad9b
-	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
 )
