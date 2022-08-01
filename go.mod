@@ -19,7 +19,7 @@ require (
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/golang-jwt/jwt/v4 v4.2.0 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20190430165422-3e4dfb77656c // indirect
-	github.com/goreleaser/goreleaser v1.10.2
+	github.com/goreleaser/goreleaser v1.10.3
 	github.com/hashicorp/go-version v1.3.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/smartystreets/goconvey v1.7.2
