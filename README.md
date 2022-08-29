@@ -6,7 +6,9 @@
 [![Coverage Status](http://codecov.io/github/marcofranssen/gothermostat/coverage.svg?branch=master)](http://codecov.io/github/marcofranssen/gothermostat?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/marcofranssen/gothermostat)](https://goreportcard.com/report/github.com/marcofranssen/gothermostat)
 
-This project enables to interact with your nest thermostat.
+> **Warning**: When Google took over Nest, the apis also changed. It is not possible to get an API Key anymore and therefore this project also won't be able to authenticate anymore.
+
+This project enables to interact with your Nest thermostat.
 
 ## Build
 
